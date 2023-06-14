@@ -36,7 +36,6 @@ class WatchListDetailAV(APIView):
 
         if serializer.is_valid() :
             serializer.save()
-
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=400)
@@ -56,3 +55,28 @@ class StreamPlatformAV(APIView):
             return Response(serializer.data)
         else :
             return Response(serializer.errors)
+            
+# same as resource in laravel
+class StreamPlatformDetailAV(APIView):
+
+    def get(self, request, pk) :
+        platform = StreamPlatform.objects.get(pk=pk)
+        serializer = StreamPlatformSerializer(platform)
+
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        platform = StreamPlatform.objects.get(pk=pk)
+        serializer = StreamPlatformSerializer(platform, data=request.data) # if update, old data must injected or it will create new one
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else :
+            return Response(serializer.errors)
+
+    def delete(self, request, pk):
+        platform = StreamPlatform.objects.get(pk=pk)
+        platform.delete()
+
+        return Response(status=204)

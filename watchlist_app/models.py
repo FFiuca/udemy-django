@@ -15,7 +15,7 @@ class Movie(models.Model):
 class StreamPlatform(models.Model):
     name = models.CharField(max_length=30)
     about = models.CharField(max_length=150)
-    website = models.TextField()
+    website = models.URLField()
 
     def __str__(self):
         return "id:{} name:{}".format(self.id, self.name)
