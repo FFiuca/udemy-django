@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'watchlist_app'
+    'watchlist_app',
 
     # third
     "debug_toolbar",
@@ -65,6 +65,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # third
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 # pip install djangorestframework-simplejwt
