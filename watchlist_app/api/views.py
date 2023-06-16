@@ -43,8 +43,8 @@ class WatchListDetailAV(APIView):
 class StreamPlatformAV(APIView):
 
     def get(self, request) :
-        platform = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(platform, many=True)
+        platform = StreamPlatform.objects.prefetch_related('watchlist').all()
+        serializer = StreamPlatformSerializer(platform, many=True, context={'request': request})
 
         return Response(serializer.data)
 
@@ -55,7 +55,7 @@ class StreamPlatformAV(APIView):
             return Response(serializer.data)
         else :
             return Response(serializer.errors)
-            
+
 # same as resource in laravel
 class StreamPlatformDetailAV(APIView):
 

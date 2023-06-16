@@ -29,6 +29,32 @@ class WatchListSerializer(serializers.ModelSerializer):
 
 
 class StreamPlatformSerializer(serializers.ModelSerializer):
+    # column name must same with related_name in child table
+    # read_only=True to prevent child table updated when program is performing the action. if you set False must override update function by your self
+    # watchlist = WatchListSerializer(many=True, read_only=True)
+
+    # get single column of child
+    # watchlist = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='title' # column name belonging child table want to show
+    #  )
+
+    # auto generate link
+    # watchlist = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='watchlist_app:movie-detail' # route name
+    # )
+
+    # return primary key
+    watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    # return __str__ value
+    # watchlist = serializers.StringRelatedField(many=True)
+
+    
     class Meta:
         model = StreamPlatform
         fields = '__all__'
+        depth = 2
