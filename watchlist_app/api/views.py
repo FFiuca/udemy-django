@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 
-from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer
+from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform
 
 class WatchListAV(APIView):
@@ -45,6 +45,22 @@ class StreamPlatformAV(APIView):
     def get(self, request) :
         platform = StreamPlatform.objects.prefetch_related('watchlist').all()
         serializer = StreamPlatformSerializer(platform, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = StreamPlatformSerializer(data=request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data)
+        else :
+            return Response(serializer.errors)
+
+class StreamPlatformAV2(APIView):
+
+    def get(self, request) :
+        platform = StreamPlatform.objects.prefetch_related('watchlist').all()
+        serializer = StreamPlatformSerializer2(platform, many=True, context={'request': request})
 
         return Response(serializer.data)
 
