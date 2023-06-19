@@ -6,14 +6,30 @@ from rest_framework import mixins, generics
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 
+
+# generic concrete view class / shortcut of mixin and genericApiView
+class ReviewListConcrete(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+class ReviewDetailConcrete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    # can custom also
+    # def get(self, request, pk,*args, **kwargs):
+    #     queryset = self.get_queryset().filter(pk=pk).all()
+    #     serializer = self.serializer_class(queryset, many=True)
+    #     return Response(serializer.data)
+
 class ReviewDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
     # can be custom like this
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset().all()
-        serializer = self.serializer_class(queryset, many=True)
+    def get(self, request, pk,*args, **kwargs):
+        queryset = self.get_queryset().filter(pk=pk).get()
+        serializer = self.serializer_class(queryset)
         return Response(serializer.data)
         # return self.retrieve(request=request, *args, **kwargs)
 

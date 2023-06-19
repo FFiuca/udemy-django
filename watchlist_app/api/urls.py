@@ -1,6 +1,6 @@
 from django.urls import path
 
-from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail
+from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete
 
 app_name = 'watchlist_app'
 urlpatterns = [
@@ -12,6 +12,11 @@ urlpatterns = [
 
     path('review/', ReviewList.as_view(), name='review'),
     path('review/<int:pk>', ReviewDetail.as_view(), name='review.detail'),
+
+    # concrete
+    path('review/concrete/', ReviewListConcrete.as_view(), name='review.concrete'),
+    path('review/concrete/<int:pk>', ReviewDetailConcrete.as_view(), name='review.concrete.detail'),
+
 
 
     path('other/', WatchListAV.other, name='other'),
