@@ -38,7 +38,11 @@ class ReviewSerializer(serializers.ModelSerializer):
              'status_active' : obj.watchlist.status_active,
              'created' : obj.watchlist.created,
              'platform_id' : obj.watchlist.platform_id,
-            #  'platform' : obj.watchlist.platform # PR
+             'platform_data' : {
+                'id' : obj.watchlist.platform.id,
+                'name' : obj.watchlist.platform.name,
+                'website' : obj.watchlist.platform.website,
+             }
         }
 
 class WatchListSerializer(serializers.ModelSerializer):
