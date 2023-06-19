@@ -10,8 +10,12 @@ class ReviewDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.U
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
+    # can be custom like this
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request=request, *args, **kwargs)
+        queryset = self.get_queryset().all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+        # return self.retrieve(request=request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
         return self.update(request=request, *args, **kwargs)
