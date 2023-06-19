@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from watchlist_app.models import Movie, StreamPlatform, WatchList
+from watchlist_app.models import Movie, StreamPlatform, WatchList, Review
 
 class MovieSerializer(serializers.ModelSerializer):
     #custom column, can use as casting or mutator on laravel
@@ -22,7 +22,27 @@ class MovieSerializer(serializers.ModelSerializer):
     def get_len_movie_name(self, object):
         return len(object.movie_name)
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    watchlist_data = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+    def get_watchlist_data(self, obj):
+        # print('aa', type(obj.watchlist))
+        return {
+            'id' : obj.watchlist.id,
+            'title' : obj.watchlist.title,
+             'storyline' : obj.watchlist.storyline,
+             'status_active' : obj.watchlist.status_active,
+             'created' : obj.watchlist.created,
+             'platform_id' : obj.watchlist.platform_id,
+            #  'platform' : obj.watchlist.platform # PR
+        }
+
 class WatchListSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
     class Meta:
         model= WatchList
         exclude = []
@@ -31,7 +51,7 @@ class WatchListSerializer(serializers.ModelSerializer):
 class StreamPlatformSerializer(serializers.ModelSerializer):
     # column name must same with related_name in child table
     # read_only=True to prevent child table updated when program is performing the action. if you set False must override update function by your self
-    # watchlist = WatchListSerializer(many=True, read_only=True)
+    watchlist = WatchListSerializer(many=True, read_only=True)
 
     # get single column of child
     # watchlist = serializers.SlugRelatedField(
@@ -48,7 +68,7 @@ class StreamPlatformSerializer(serializers.ModelSerializer):
     # )
 
     # return primary key
-    watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     # return __str__ value
     # watchlist = serializers.StringRelatedField(many=True)

@@ -1,9 +1,33 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
+from rest_framework import mixins, generics
 
-from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2
-from watchlist_app.models import Movie, WatchList, StreamPlatform
+from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer
+from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
+
+class ReviewDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request=request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request=request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request=request, *args, **kwargs)
+
+class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request=request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request=request, *args, **kwargs)
 
 class WatchListAV(APIView):
 
@@ -96,3 +120,14 @@ class StreamPlatformDetailAV(APIView):
         platform.delete()
 
         return Response(status=204)
+
+@api_view(['GET'])
+def getReview(request):
+    # return Response({
+    #     'data' : list(Review.objects.prefetch_related('watchlist').all().values())
+    # }, status=200)
+
+    data = Review.objects.prefetch_related('watchlist').all()
+    ser = ReviewSerializer(data, many=True)
+
+    return Response(ser.data)
