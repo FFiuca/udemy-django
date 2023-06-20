@@ -10,5 +10,5 @@ I'm a full stack developer...
 
 
 
-👩‍💻 It's just my udemy course practice
+👩‍💻 It's just my udemy course practice [django framework]
 
