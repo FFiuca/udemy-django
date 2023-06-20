@@ -1,6 +1,6 @@
 from django.urls import path
 
-from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete
+from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete, ReviewListQueryset, ReviewCreatePerform
 
 app_name = 'watchlist_app'
 urlpatterns = [
@@ -17,7 +17,17 @@ urlpatterns = [
     path('review/concrete/', ReviewListConcrete.as_view(), name='review.concrete'),
     path('review/concrete/<int:pk>', ReviewDetailConcrete.as_view(), name='review.concrete.detail'),
 
-
+    #override querysite based on pk_movie
+    path(
+        'stream/<int:pk_watchlist>/review', 
+        ReviewListQueryset.as_view(), 
+        # name='review.movie.filter'
+    ),
+    path(
+        'stream/<int:pk_watchlist>/review-create', 
+        ReviewCreatePerform.as_view(), 
+        name='review.movie.create'
+    ),
 
     path('other/', WatchListAV.other, name='other'),
     path('getReview/', getReview, name='other.getReview'),

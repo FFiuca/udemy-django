@@ -1,11 +1,46 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
-from rest_framework import mixins, generics
+from rest_framework import (
+    mixins, 
+    generics # basically generics provide common CRUD function and we dont need write repeatly, just config the class
+)
 
-from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer
+from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 
+#override perform extends of mixins class
+class ReviewCreatePerform(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer2
+
+    def perform_create(self, serializer):
+        print(self.kwargs, self.args, self.kwargs.get('pk_watchlist'))
+        pk = self.kwargs['pk_watchlist']
+        watchlist = WatchList.objects.get(pk=pk)
+
+        return serializer.save(watchlist=watchlist)
+        # return super().perform_create(serializer)
+
+#override querysite extends of generics class
+class ReviewListQueryset(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer2
+
+    # logic : due generics.ListCreateAPIView class extends of genereic.APIView, so it will override get_queryset on genereic.APIView
+    # both of them is can, at bottom one doesn't need queryset instance becase he return queryset itself
+    def get_queryset(self):
+        print(
+            self.kwargs, # return dict
+            self.args # return null tuple, it mean every url params will be provide by self.kwargs
+        )
+
+        pk = self.kwargs['pk_watchlist'] # it get from url params
+        # pk = self.kwargs.get('pk')
+        return super().get_queryset().filter(watchlist=pk)
+
+    # def get_queryset(self):
+    #     return Review.objects.filter(watchlist=self.kwargs['pk_watchlist'])
 
 # generic concrete view class / shortcut of mixin and genericApiView
 class ReviewListConcrete(generics.ListCreateAPIView):

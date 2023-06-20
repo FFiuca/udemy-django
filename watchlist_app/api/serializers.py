@@ -28,6 +28,31 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+        # exclude = ['watchlist']
+
+    def get_watchlist_data(self, obj):
+        # print('aa', type(obj.watchlist))
+        return {
+            'id' : obj.watchlist.id,
+            'title' : obj.watchlist.title,
+             'storyline' : obj.watchlist.storyline,
+             'status_active' : obj.watchlist.status_active,
+             'created' : obj.watchlist.created,
+             'platform_id' : obj.watchlist.platform_id,
+             'platform_data' : {
+                'id' : obj.watchlist.platform.id,
+                'name' : obj.watchlist.platform.name,
+                'website' : obj.watchlist.platform.website,
+             }
+        }
+
+class ReviewSerializer2(serializers.ModelSerializer):
+    # watchlist = serializers.PrimaryKeyRelatedField(required=False)
+    watchlist_data = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Review
+        # fields = '__all__'
+        exclude = ['watchlist']
 
     def get_watchlist_data(self, obj):
         # print('aa', type(obj.watchlist))
