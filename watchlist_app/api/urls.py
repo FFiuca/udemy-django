@@ -1,6 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete, ReviewListQueryset, ReviewCreatePerform
+from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete, ReviewListQueryset, ReviewCreatePerform, StreamPlatformViewSets, StreamPlatformViewSets2
+
+
+router = DefaultRouter()
+router.register('stream2', StreamPlatformViewSets, basename='streamplatform2')
+router.register('stream3', StreamPlatformViewSets2, basename='streamplatform3')
 
 app_name = 'watchlist_app'
 urlpatterns = [
@@ -17,7 +23,7 @@ urlpatterns = [
     path('review/concrete/', ReviewListConcrete.as_view(), name='review.concrete'),
     path('review/concrete/<int:pk>', ReviewDetailConcrete.as_view(), name='review.concrete.detail'),
 
-    #override querysite based on pk_movie
+    # override querysite based on pk_movie
     path(
         'stream/<int:pk_watchlist>/review', 
         ReviewListQueryset.as_view(), 
@@ -28,6 +34,12 @@ urlpatterns = [
         ReviewCreatePerform.as_view(), 
         name='review.movie.create'
     ),
+
+    # ViewSets
+    path('', include(router.urls)),
+    path('stream4', StreamPlatformViewSets2.as_view({
+        'get' : 'list2' # custom view function, .as_view() only can use instead urlpatterns value
+    }), name='streamplatform4'),
 
     path('other/', WatchListAV.other, name='other'),
     path('getReview/', getReview, name='other.getReview'),

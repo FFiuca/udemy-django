@@ -1,13 +1,54 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import (
     mixins, 
-    generics # basically generics provide common CRUD function and we dont need write repeatly, just config the class
+    generics, # basically generics provide common CRUD function and we dont need write repeatly, just config the class
+    viewsets
 )
 
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
+
+# custom ViewSets
+class StreamPlatformViewSets2(mixins.ListModelMixin, mixins.RetrieveModelMixin , viewsets.ViewSet):
+    # queryset = StreamPlatform.objects.all()
+
+
+    def list(self, request):
+        queryset = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # custom function name
+    def list2(self, request):
+        queryset = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = StreamPlatform.objects.all()
+        platform = get_object_or_404(queryset, pk=pk)
+        serializer = StreamPlatformSerializer(platform)
+
+        return Response(serializer.data)
+
+# ViewSet and Routes -> like resource in laravel
+class StreamPlatformViewSets(viewsets.ViewSet):
+
+    def list(self, request):
+        queryset = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = StreamPlatform.objects.all()
+        platform = get_object_or_404(queryset, pk=pk)
+        serializer = StreamPlatformSerializer(platform)
+
+        return Response(serializer.data)
+        
 
 #override perform extends of mixins class
 class ReviewCreatePerform(generics.CreateAPIView):

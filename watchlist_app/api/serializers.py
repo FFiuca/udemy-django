@@ -1,5 +1,6 @@
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from watchlist_app.models import Movie, StreamPlatform, WatchList, Review
+
 
 class MovieSerializer(serializers.ModelSerializer):
     #custom column, can use as casting or mutator on laravel
@@ -101,7 +102,6 @@ class StreamPlatformSerializer(serializers.ModelSerializer):
 
     # return __str__ value
     # watchlist = serializers.StringRelatedField(many=True)
-
     
     class Meta:
         model = StreamPlatform
