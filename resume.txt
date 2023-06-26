@@ -1,0 +1,3 @@
+- apiview is shortcut for declaring route for common CRUD function
+- GenericAPIView combine shortcut of apiview and automate common CRUD function with declaring CRUD function
+- ConcreteApiView combine GenericAPIView and automate common CRUD function without declaring CRUD function

@@ -38,7 +38,8 @@ urlpatterns = [
     # ViewSets
     path('', include(router.urls)),
     path('stream4', StreamPlatformViewSets2.as_view({
-        'get' : 'list2' # custom view function, .as_view() only can use instead urlpatterns value
+        'get' : 'list2', # custom view function, .as_view() only can use instead urlpatterns value
+        'post' : 'create2',
     }), name='streamplatform4'),
 
     path('other/', WatchListAV.other, name='other'),

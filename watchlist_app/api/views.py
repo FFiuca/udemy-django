@@ -11,6 +11,9 @@ from rest_framework import (
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 
+# ModelViewSets -> automate the model
+
+
 # custom ViewSets
 class StreamPlatformViewSets2(mixins.ListModelMixin, mixins.RetrieveModelMixin , viewsets.ViewSet):
     # queryset = StreamPlatform.objects.all()
@@ -27,14 +30,25 @@ class StreamPlatformViewSets2(mixins.ListModelMixin, mixins.RetrieveModelMixin ,
         serializer = StreamPlatformSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def create2(self, request, *args, **kwargs):
+        serializer = StreamPlatformSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
     def retrieve(self, request, pk=None):
         queryset = StreamPlatform.objects.all()
         platform = get_object_or_404(queryset, pk=pk)
         serializer = StreamPlatformSerializer(platform)
 
         return Response(serializer.data)
+    
+
 
 # ViewSet and Routes -> like resource in laravel
+# ViewSet will generate url based on function view class provided, ex: when you add create function, ViewSet will generate url that have post type, just little bit different than laravel
 class StreamPlatformViewSets(viewsets.ViewSet):
 
     def list(self, request):
@@ -48,6 +62,14 @@ class StreamPlatformViewSets(viewsets.ViewSet):
         serializer = StreamPlatformSerializer(platform)
 
         return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = StreamPlatformSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
         
 
 #override perform extends of mixins class
