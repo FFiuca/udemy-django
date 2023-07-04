@@ -11,11 +11,37 @@ from rest_framework import (
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 
-# ModelViewSets -> automate the model
+# custom model view set
+class StreamPlatformModelViewSet2(viewsets.ModelViewSet):
+    queryset = StreamPlatform.objects.prefetch_related('watchlist').all() # to increase performance
+    serializer_class = StreamPlatformSerializer
 
+    # def get_queryset(self):
+    #     return super().get_queryset().prefetch_related('watchlist') # to increase performance but when override with list function maybe, not carried away to queryset, must init manually
+
+    # if use this doesn't need queryset instance anymore
+    # def get_queryset(self):
+    #     return StreamPlatform.objects.all()
+
+    # can override too
+    def list(self, request):
+        # print(super().get_queryset().prefetch_related('watchlist'))
+        queryset = super().get_queryset().exclude(pk=0).all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+# ModelViewSets -> automate the model -> resource feature inlcudes
+class StreamPlatformModelViewSet(viewsets.ModelViewSet):
+    queryset = StreamPlatform.objects.all()
+    serializer_class = StreamPlatformSerializer
 
 # custom ViewSets
-class StreamPlatformViewSets2(mixins.ListModelMixin, mixins.RetrieveModelMixin , viewsets.ViewSet):
+class StreamPlatformViewSets2(
+    mixins.ListModelMixin, 
+    mixins.RetrieveModelMixin , 
+    viewsets.ViewSet
+):
     # queryset = StreamPlatform.objects.all()
 
 
