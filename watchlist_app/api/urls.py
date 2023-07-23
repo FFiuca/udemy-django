@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete, ReviewListQueryset, ReviewCreatePerform, StreamPlatformViewSets, StreamPlatformViewSets2, StreamPlatformModelViewSet, StreamPlatformModelViewSet2
+from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformAV, StreamPlatformDetailAV, StreamPlatformAV2, getReview, ReviewList, ReviewDetail, ReviewListConcrete, ReviewDetailConcrete, ReviewListQueryset, ReviewCreatePerform, StreamPlatformViewSets, StreamPlatformViewSets2, StreamPlatformModelViewSet, StreamPlatformModelViewSet2, ReviewCreatePerformHasUser
 
 # only viewsets base class can be implement with router
 router = DefaultRouter()
@@ -27,14 +27,19 @@ urlpatterns = [
 
     # override querysite based on pk_movie
     path(
-        'stream/<int:pk_watchlist>/review', 
-        ReviewListQueryset.as_view(), 
+        'stream/<int:pk_watchlist>/review',
+        ReviewListQueryset.as_view(),
         # name='review.movie.filter'
     ),
     path(
-        'stream/<int:pk_watchlist>/review-create', 
-        ReviewCreatePerform.as_view(), 
+        'stream/<int:pk_watchlist>/review-create',
+        ReviewCreatePerform.as_view(),
         name='review.movie.create'
+    ),
+    path(
+        'stream/<int:pk_watchlist>/review-create-has-user',
+        ReviewCreatePerformHasUser.as_view(),
+        name='review.movie.createHasUser'
     ),
 
     # ViewSets

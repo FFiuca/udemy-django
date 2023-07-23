@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, DecimalValidator
+from django.contrib.auth.models import User
 
 from watchlist_app.api.validators import preventDecimalNumber
 # Create your models here.
@@ -44,6 +45,8 @@ class Review(models.Model):
             preventDecimalNumber,
         ]
     )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=250, null=True)
     watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
     active = models.BooleanField(default=True)
@@ -52,4 +55,3 @@ class Review(models.Model):
 
     def __str__(self):
         return 'id:{}, rating:{}, watchlist:{}'.format(self.id, self.rating, self.watchlist.title)
-        

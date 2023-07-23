@@ -1,7 +1,13 @@
 from rest_framework import serializers, viewsets
 from watchlist_app.models import Movie, StreamPlatform, WatchList, Review
+from django.contrib.auth.admin import User
+from virtualenv.app_data import read_only
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= User
+        exclude=['password']
 class MovieSerializer(serializers.ModelSerializer):
     #custom column, can use as casting or mutator on laravel
     len_movie_name = serializers.SerializerMethodField()
@@ -12,7 +18,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
     # def save(self, validatedData):
     #     data = {
-    #                 **validatedData, 
+    #                 **validatedData,
     #                 'description': validatedData.description + ' cek'
     #             }
     #     return self.save(**data)
@@ -26,6 +32,7 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     watchlist_data = serializers.SerializerMethodField(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Review
         fields = '__all__'
@@ -50,6 +57,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ReviewSerializer2(serializers.ModelSerializer):
     # watchlist = serializers.PrimaryKeyRelatedField(required=False)
     watchlist_data = serializers.SerializerMethodField(read_only=True)
+    user = UserSerializer(read_only=True)
+    # user = serializers.PrimaryKeyRelatedField(read_only=False) // error: must oveerid get_queryset
     class Meta:
         model = Review
         # fields = '__all__'
@@ -102,7 +111,7 @@ class StreamPlatformSerializer(serializers.ModelSerializer):
 
     # return __str__ value
     # watchlist = serializers.StringRelatedField(many=True)
-    
+
     class Meta:
         model = StreamPlatform
         fields = '__all__'
@@ -133,7 +142,7 @@ class StreamPlatformSerializer2(serializers.HyperlinkedModelSerializer):
     # return __str__ value
     # watchlist = serializers.StringRelatedField(many=True)
 
-    
+
     class Meta:
         model = StreamPlatform
         fields = '__all__'

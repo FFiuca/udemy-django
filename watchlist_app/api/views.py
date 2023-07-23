@@ -3,13 +3,15 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import (
-    mixins, 
+    mixins,
     generics, # basically generics provide common CRUD function and we dont need write repeatly, just config the class
     viewsets
 )
 
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
+from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
 
 # custom model view set
 class StreamPlatformModelViewSet2(viewsets.ModelViewSet):
@@ -38,8 +40,8 @@ class StreamPlatformModelViewSet(viewsets.ModelViewSet):
 
 # custom ViewSets
 class StreamPlatformViewSets2(
-    mixins.ListModelMixin, 
-    mixins.RetrieveModelMixin , 
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin ,
     viewsets.ViewSet
 ):
     # queryset = StreamPlatform.objects.all()
@@ -70,7 +72,7 @@ class StreamPlatformViewSets2(
         serializer = StreamPlatformSerializer(platform)
 
         return Response(serializer.data)
-    
+
 
 
 # ViewSet and Routes -> like resource in laravel
@@ -96,7 +98,7 @@ class StreamPlatformViewSets(viewsets.ViewSet):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
-        
+
 
 #override perform extends of mixins class
 class ReviewCreatePerform(generics.CreateAPIView):
@@ -106,10 +108,30 @@ class ReviewCreatePerform(generics.CreateAPIView):
     def perform_create(self, serializer):
         print(self.kwargs, self.args, self.kwargs.get('pk_watchlist'))
         pk = self.kwargs['pk_watchlist']
+        user = User.objects.get(pk=2)
         watchlist = WatchList.objects.get(pk=pk)
 
-        return serializer.save(watchlist=watchlist)
+        return serializer.save(watchlist=watchlist, user=user)
         # return super().perform_create(serializer)
+
+class ReviewCreatePerformHasUser(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer2
+
+    # user can't double input scenario
+    def perform_create(self, serializer):
+        # make user as default first due no login page
+        # user = self.request.user
+        user = User.objects.get(pk=2)
+        watchlist = WatchList.objects.get(pk=self.kwargs['pk_watchlist'])
+        checkEverReview = Review.objects.filter(watchlist=watchlist, user=user).exists()
+
+        if(checkEverReview):
+            raise ValidationError('The use has created review before.')
+
+
+        return serializer.save(user=user, watchlist=watchlist)
+        # return super().perform_create(self, serializer)
 
 #override querysite extends of generics class
 class ReviewListQueryset(generics.ListCreateAPIView):
@@ -171,6 +193,7 @@ class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Generi
         return self.list(request=request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        # print('haha',self.request.user)
         return self.create(request=request, *args, **kwargs)
 
 class WatchListAV(APIView):
