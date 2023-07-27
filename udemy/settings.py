@@ -73,12 +73,17 @@ MIDDLEWARE = [
 # pip install djangorestframework-simplejwt
 REST_FRAMEWORK  = {
     'DEFAULT_AUTHENTICATION_CLASSES' : [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # this module neeede for default auth djano, in section is django temporray login and logout
     ],
     'DEFAULT_RENDERER_CLASSES' : [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated', # any route who access must login
+    ],
 }
 
 SIMPLE_JWT = {

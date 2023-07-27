@@ -22,4 +22,6 @@ urlpatterns = [
     path('watch/', include('watchlist_app.api.urls')),
 
     path("__debug__/", include("debug_toolbar.urls")),
+
+    path('api-auth/', include('rest_framework.urls')),
 ]

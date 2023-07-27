@@ -7,11 +7,12 @@ from rest_framework import (
     generics, # basically generics provide common CRUD function and we dont need write repeatly, just config the class
     viewsets
 )
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
 
 # custom model view set
 class StreamPlatformModelViewSet2(viewsets.ModelViewSet):
@@ -117,13 +118,15 @@ class ReviewCreatePerform(generics.CreateAPIView):
 class ReviewCreatePerformHasUser(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer2
+    permission_classes=[IsAuthenticatedOrReadOnly] # https://www.django-rest-framework.org/api-guide/permissions/#api-reference
 
     # user can't double input scenario
     def perform_create(self, serializer):
         # make user as default first due no login page
-        # user = self.request.user
-        user = User.objects.get(pk=2)
+        # user = User.objects.get(pk=2)
+        user = self.request.user
         watchlist = WatchList.objects.get(pk=self.kwargs['pk_watchlist'])
+
         checkEverReview = Review.objects.filter(watchlist=watchlist, user=user).exists()
 
         if(checkEverReview):
@@ -232,6 +235,7 @@ class WatchListDetailAV(APIView):
             return Response(serializer.errors, status=400)
 
 class StreamPlatformAV(APIView):
+    permission_classes=[IsAuthenticatedOrReadOnly]
 
     def get(self, request) :
         platform = StreamPlatform.objects.prefetch_related('watchlist').all()
