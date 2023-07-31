@@ -15,26 +15,36 @@ from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSeriali
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 from django.contrib.auth.models import User
 
-
+# must test with postman also
 # custom permission by base permission
 class ReviewUpdatePerformHasUserUsePermission(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer2
     permission_classes=[ReviewUserOrReadOnly] # https://www.django-rest-framework.org/api-guide/permissions/#api-reference
 
+    # def get_queryset(self, ):
+    #     query = super().get_queryset()
+
+    #     if self.request.user.is_authenticated :
+    #         query = query.filter(user=self.request.user)
+
+    #     return query
+
     # still need check param url is not direct to review
     # user can't double input scenario
     def perform_update(self, serializer):
-        # make user as default first due no login page
         # user = User.objects.get(pk=2)
+        print('hhihi', self.request, self.kwargs,)
+        # review = Review.objects.get(pk=self.kwargs['pk']) # doesn't need due use baseClassSerializer that already inject instance of selected review if use standard
+
+        return serializer.save(data=self.request.data)
+
+
+    def perform_create(self, serializer):
         user = self.request.user
-        watchlist = WatchList.objects.get(pk=self.kwargs['pk_watchlist'])
+        watchlist = WatchList.objects.get(pk=self.request.data.get('watchlist'))
 
-        checkEverReview = Review.objects.filter(watchlist=watchlist, user=user).exists()
-
-        if(checkEverReview):
-            raise ValidationError('The use has created review before.')
-
+        # on djange, every field relationship must select from master first
         return serializer.save(user=user, watchlist=watchlist)
 
 # custom permission using old routing

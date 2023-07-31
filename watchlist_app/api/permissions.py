@@ -13,6 +13,9 @@ class ReviewUserOrReadOnly(permissions.BasePermission):
             return True
         else:
             # do logic for DDM permission
-            print('logic DDL permission', obj.user, obj)
+            print('logic DDM permission')
+            print(obj)
+            print(view)
 
+            # return True
             return obj.user == request.user
