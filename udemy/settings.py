@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_extensions",
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_simplejwt",
 ]
 
@@ -74,8 +75,9 @@ MIDDLEWARE = [
 REST_FRAMEWORK  = {
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication', # this module neeede for default auth djano, in section is django temporray login and logout
+        'rest_framework.authentication.TokenAuthentication', # way to know avaible auth type: open https://www.django-rest-framework.org/api-guide/authentication/#setting-the-authentication-scheme and rest_xxx.autxxx.{List of APIReference}
     ],
     'DEFAULT_RENDERER_CLASSES' : [
         'rest_framework.renderers.JSONRenderer',

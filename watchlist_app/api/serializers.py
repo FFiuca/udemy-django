@@ -55,14 +55,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         }
 
 class ReviewSerializer2(serializers.ModelSerializer):
-    # watchlist = serializers.PrimaryKeyRelatedField(required=False)
-    watchlist_data = serializers.SerializerMethodField(read_only=True)
+    watchlist = serializers.PrimaryKeyRelatedField(read_only=False, queryset=WatchList.objects.all())
+    # watchlist_data = serializers.SerializerMethodField(read_only=True)
     user = UserSerializer(read_only=True)
     # user = serializers.PrimaryKeyRelatedField(read_only=False) // error: must oveerid get_queryset
     class Meta:
         model = Review
-        # fields = '__all__'
-        exclude = ['watchlist']
+        fields = '__all__'
+        # exclude = ['watchlist']
 
     def get_watchlist_data(self, obj):
         # print('aa', type(obj.watchlist))

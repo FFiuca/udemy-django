@@ -10,15 +10,30 @@ from rest_framework import (
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly, OnlyOneTimeInputReview
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 from django.contrib.auth.models import User
 
+class ReviewStandard(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class= ReviewSerializer2
+    permission_classes=[IsAuthenticated]
+
+    # to return custom response
+    def list(self, request, *args, **kwargs):
+        data = self.get_serializer(self.get_queryset(), many=True).data
+        data = {
+            'status': 200,
+            'data' : data
+        }
+
+        return Response(data=data, status=200)
+
 # must test with postman also
 # custom permission by base permission
 class ReviewUpdatePerformHasUserUsePermission(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.prefetch_related('watchlist', 'user').all()
     serializer_class = ReviewSerializer2
     permission_classes=[ReviewUserOrReadOnly] # https://www.django-rest-framework.org/api-guide/permissions/#api-reference
 
@@ -42,9 +57,18 @@ class ReviewUpdatePerformHasUserUsePermission(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        watchlist = WatchList.objects.get(pk=self.request.data.get('watchlist'))
+        # watchlist = WatchList.objects.get(pk=self.request.data.get('watchlist'))
+        watchlist = WatchList.objects.get(pk=1)
 
-        # on djange, every field relationship must select from master first
+        count = watchlist.reviews.count() # reviews is related_name
+
+        watchlist.sum_rating = count+ 1
+        watchlist.avg_rating = (watchlist.avg_rating + serializer.validated_data['rating']) / watchlist.sum_rating
+
+        watchlist.save()
+
+        print('aaa',user, count, 'zzz', watchlist.sum_rating, watchlist.avg_rating, watchlist)
+        # on djanga, every field relationship must select from master first
         return serializer.save(user=user, watchlist=watchlist)
 
 # custom permission using old routing

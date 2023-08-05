@@ -21,6 +21,7 @@ from watchlist_app.api.views import (
     ReviewCreatePerformHasUser,
     StreamPlatformCustomPermission,
     ReviewUpdatePerformHasUserUsePermission,
+    ReviewStandard,
     )
 
 # only viewsets base class can be implement with router
@@ -31,6 +32,7 @@ router.register('stream5', StreamPlatformModelViewSet, basename='streamplatform5
 router.register('stream6', StreamPlatformModelViewSet2, basename='streamplatform5')
 router.register('stream/custom-permissions', StreamPlatformCustomPermission, basename='stream.customPermission')
 router.register('stream/validate-owner-data', ReviewUpdatePerformHasUserUsePermission, basename='review.validateOwnerData')
+router.register('stream/standard', ReviewStandard, basename='review.standard')
 
 app_name = 'watchlist_app'
 urlpatterns = [
