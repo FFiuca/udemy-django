@@ -18,4 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def save(self):
-        return UserService.register(self=self,obj=self)
+        print(self)
+        srv = UserService(outerObj=self)
+        print(srv)
+        return srv.register()
