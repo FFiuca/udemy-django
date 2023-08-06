@@ -1,8 +1,10 @@
 from user_app.api.serializers import UserSerializer
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from user_app import models # needed to call observer signals
+from rest_framework import status
+from user_app import models # needed to call observer signals, HOMEWORK: find how to auto discover observer signals
 
 @api_view(['POST',])
 def register(request):
@@ -32,3 +34,12 @@ def register(request):
             }
         }, status=200)
 
+@api_view(['POST',])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    if request.method == 'POST':
+        delete = request.user.auth_token.delete()
+
+        return Response(data={
+            'status':200,
+        }, status=status.HTTP_200_OK)
