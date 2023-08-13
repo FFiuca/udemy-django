@@ -37,6 +37,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+APPEND_SLASH = True # use to append slash at end of url with '/' and only wirk with get request, django strict for url and must match on registered routing
 
 # Application definition
 
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -86,11 +88,21 @@ REST_FRAMEWORK  = {
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.IsAuthenticated', # any route who access must login
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '1000/day', # test for login view
+        'user': '1000/day'
+    },
 }
 
+# simple jwt will automatic integrated to authorization built-in of django, so you can use basic auth class permission of django directly
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS' : True,
 }
 
 
@@ -128,6 +140,15 @@ DATABASES = {
         'NAME': env('DB_DATABASE'),
         'USER' : env('DB_USERNAME'),
         'PASSWORD' : env('DB_PASSWORD')
+    }
+}
+
+CACHES = {
+    "default": {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+
+        # "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        # "LOCATION": "/var/tmp/django_cache",
     }
 }
 

@@ -9,6 +9,7 @@ from rest_framework import (
 )
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.throttling import UserRateThrottle
 
 from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly, OnlyOneTimeInputReview
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
@@ -19,6 +20,7 @@ class ReviewStandard(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class= ReviewSerializer2
     permission_classes=[IsAuthenticated]
+    throttle_classes=[UserRateThrottle]
 
     # to return custom response
     def list(self, request, *args, **kwargs):
