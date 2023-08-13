@@ -2,6 +2,7 @@
 - GenericAPIView combine shortcut of apiview and automate common CRUD function with declaring CRUD function
 - ConcreteApiView combine GenericAPIView and automate common CRUD function without declaring CRUD function
 - ModelViewSets is like combination with concreteapiview and the name of the function is readable, ex: use list() instead get()
+- use kwargs for url param
 
 differences between APIView and ViewSets
 - APIView (not on generic.APIView) :
@@ -10,4 +11,4 @@ differences between APIView and ViewSets
 
 - ViewSets :
     1. use list, create, update, delete, retrieve
-    2. 
+    2.

@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token, ObtainAuthToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from user_app.api.throttling import LoginThrottle
 
 from user_app.api.views import register, logout, obtain_auth_token2
 

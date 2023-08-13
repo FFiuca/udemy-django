@@ -9,12 +9,26 @@ from rest_framework import (
 )
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.throttling import UserRateThrottle
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly, OnlyOneTimeInputReview
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 from django.contrib.auth.models import User
+
+
+# filter, order, pagination
+class ReviewUser(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class=ReviewSerializer2
+
+    def get_queryset(self):
+        q = super().get_queryset()
+        username = self.request.GET['username']
+        # print(username)
+        # q = q.filter(user__username=username, watchlist__pk=1) # if you get parent table by child table, use field name for relationship
+        q = q.filter(user__username=username).order_by('-created', 'rating')
+        return q
 
 class ReviewStandard(viewsets.ModelViewSet):
     queryset = Review.objects.all()
@@ -38,6 +52,7 @@ class ReviewUpdatePerformHasUserUsePermission(viewsets.ModelViewSet):
     queryset = Review.objects.prefetch_related('watchlist', 'user').all()
     serializer_class = ReviewSerializer2
     permission_classes=[ReviewUserOrReadOnly] # https://www.django-rest-framework.org/api-guide/permissions/#api-reference
+    throttle_classes = [UserRateThrottle, AnonRateThrottle] # it will auto determine throtle scope based on auth,
 
     # def get_queryset(self, ):
     #     query = super().get_queryset()

@@ -88,13 +88,18 @@ REST_FRAMEWORK  = {
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.IsAuthenticated', # any route who access must login
     ],
+    # https://www.django-rest-framework.org/api-guide/throttling/
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+        'rest_framework.throttling.UserRateThrottle',
+        'user_app.api.throttling.LoginThrottle',
+        'user_app.api.throttling.RegisterThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '1000/day', # test for login view
-        'user': '1000/day'
+        'anon': '10000/day', # test for login view
+        'user': '10000/day',
+        'login-attempt' : '2/minute', # look user_app.throttling.LoginThrottle
+        'register-attempt' : '10/minute',
     },
 }
 

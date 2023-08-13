@@ -50,7 +50,7 @@ class Review(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=250, null=True)
-    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
+    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews') # related name use for get relationship on query builder from parent class
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)

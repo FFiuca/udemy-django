@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, BlacklistedToken
 from user_app import models # needed to call observer signals, HOMEWORK: find how to auto discover observer signals
+from user_app.api.throttling import RegisterThrottle
 
 # try to custom login buil-in but can't yet
 @api_view(['POST',])
@@ -42,7 +43,7 @@ class CustomAuth(ObtainAuthToken):
 obtain_auth_token2 = CustomAuth
 
 @api_view(['POST',])
-@throttle_classes([AnonRateThrottle,])
+@throttle_classes([RegisterThrottle])
 def register(request):
 
     if request.method == 'POST':

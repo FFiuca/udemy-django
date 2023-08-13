@@ -22,6 +22,7 @@ from watchlist_app.api.views import (
     StreamPlatformCustomPermission,
     ReviewUpdatePerformHasUserUsePermission,
     ReviewStandard,
+    ReviewUser,
     )
 
 # only viewsets base class can be implement with router
@@ -65,6 +66,12 @@ urlpatterns = [
         ReviewCreatePerformHasUser.as_view(),
         name='review.movie.createHasUser'
     ),
+    path(
+        'stream/review/filter/',
+        ReviewUser.as_view(),
+        name='review.filter'
+    ),
+
 
     # ViewSets
     path('', include(router.urls)),

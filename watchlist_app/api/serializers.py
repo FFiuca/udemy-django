@@ -82,6 +82,7 @@ class ReviewSerializer2(serializers.ModelSerializer):
 
 class WatchListSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
+    platform_name = serializers.CharField(source='platform.name') # platform.name get from watchlist model field that use for relationship between platform and platform, to get directly name of platform
     class Meta:
         model= WatchList
         exclude = []
