@@ -5,11 +5,11 @@ from user_app.api.throttling import LoginThrottle
 
 from user_app.api.views import register, logout, obtain_auth_token2
 
-
+app_name = 'user_app'
 urlpatterns = [
     path('login/', obtain_auth_token, name='login'),
     path('login2/', obtain_auth_token2, name='login2'),
-    path('logout/', logout, name='register'),
+    path('logout/', logout, name='logout'),
 
     path('register/', register, name='register'),
 

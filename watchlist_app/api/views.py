@@ -15,16 +15,17 @@ from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly,
 from watchlist_app.api.serializers import MovieSerializer, StreamPlatformSerializer, WatchListSerializer, StreamPlatformSerializer2, ReviewSerializer, ReviewSerializer2
 from watchlist_app.models import Movie, WatchList, StreamPlatform, Review
 from django.contrib.auth.models import User
-
+from watchlist_app.api.paginations import DefaultPagination
 
 # filter, order, pagination
 class ReviewUser(generics.ListAPIView):
     queryset = Review.objects.all()
     serializer_class=ReviewSerializer2
+    pagination_class = DefaultPagination
 
     def get_queryset(self):
         q = super().get_queryset()
-        username = self.request.GET['username']
+        username = self.request.GET['username'] if 'username' in self.request.GET else None # ternary
         # print(username)
         # q = q.filter(user__username=username, watchlist__pk=1) # if you get parent table by child table, use field name for relationship
         q = q.filter(user__username=username).order_by('-created', 'rating')
