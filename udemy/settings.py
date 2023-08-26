@@ -101,6 +101,11 @@ REST_FRAMEWORK  = {
         'login-attempt' : '2/minute', # look user_app.throttling.LoginThrottle
         'register-attempt' : '10/minute',
     },
+    # 'TEST_REQUEST_RENDERER_CLASSES': [
+    #     # 'rest_framework.renderers.MultiPartRenderer',
+    #     'rest_framework.renderers.JSONRenderer',
+    #     # 'rest_framework.renderers.TemplateHTMLRenderer'
+    # ]
 
     # for default setting on generic and viewset view, if want on APIView to apply see https://stackoverflow.com/questions/35830779/django-rest-framework-apiview-pagination
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # "next": "http://127.0.0.1:8000/watch/stream/review/filter/?limit=4&offset=4&username=admin",

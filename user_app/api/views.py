@@ -79,10 +79,10 @@ def register(request):
             }
         }, status=200)
 
-@api_view(['POST',])
+@api_view(['POST','GET',])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    if request.method == 'POST':
+    if request.method in ['POST', 'GET']:
         delete = request.user.auth_token.delete()
 
         return Response(data={
